@@ -1,6 +1,8 @@
 package com.example.journal;
 
-public class Note {
+import java.io.Serializable;
+
+public class Note implements Serializable {
     private int id;
     private String timestamp;
     private String text;
