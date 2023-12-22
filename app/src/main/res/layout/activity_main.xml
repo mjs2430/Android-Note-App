@@ -5,10 +5,32 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/main_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Event List"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
     <ListView
         android:id="@+id/event_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@id/header"
+    />
+
+
 
     <Button
         android:id="@+id/add_event_button"
