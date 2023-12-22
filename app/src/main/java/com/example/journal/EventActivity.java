@@ -1,16 +1,24 @@
 package com.example.journal;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.io.OutputStream;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -118,6 +126,46 @@ public class EventActivity extends AppCompatActivity {
         }
     }
 
+    private void exportToCSV() {
+        String fileName = "notes.csv";
+
+        StringBuilder data = new StringBuilder();
+
+        // Create CSV format from note list
+        for (Note note : noteList) {
+            data.append(note.getTimestamp()).append(",").append('"').append(note.getText()).append('"').append("\n");
+        }
+
+        try {
+            OutputStream fos;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ContentResolver resolver = getContentResolver();
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.Downloads.DISPLAY_NAME, fileName);
+                contentValues.put(MediaStore.Downloads.MIME_TYPE, "text/csv");
+                contentValues.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS);
+
+                Uri contentUri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues);
+                fos = resolver.openOutputStream(contentUri);
+            } else {
+                File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                File file = new File(path, fileName);
+                fos = new FileOutputStream(file);
+            }
+
+            fos.write(data.toString().getBytes());
+            fos.close();
+
+            Toast.makeText(this, "Notes exported to CSV file", Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, "Error saving CSV file", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void exportData(View v) {
+        exportToCSV();
+    }
 
 
     }
