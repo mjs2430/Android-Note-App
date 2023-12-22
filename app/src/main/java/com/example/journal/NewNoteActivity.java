@@ -40,37 +40,40 @@ public class NewNoteActivity extends AppCompatActivity {
     }
 
     public void openCamera(View view) {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.TITLE, "New Picture");
+        values.put(MediaStore.Images.Media.DESCRIPTION, "From your Camera");
+        photoURI = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Handle error
-            }
-
-            if (photoFile != null) {
-                photoURI = FileProvider.getUriForFile(this,
-                        getApplicationContext().getPackageName() + ".fileprovider",
-                        photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-            }
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
 
     private File createImageFile() throws IOException {
+        // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        // Save to external storage, in a directory specific to your app.
-        // You may to need to add CREATE_DOCUMENTS permission to the manifest file and request it from user.
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        String imageFileName = "JPG_" + timeStamp + "_";
+
+        // Environment.getExternalStoragePublicDirectory has been deprecated in API 29, hence replaced
+        // Directory will be /storage/emulated/0/Pictures/JournalPics
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "JournalPics");
+
+        // If you use above deprecated API use below one for API level >= 29
+        // File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
+        if (!storageDir.exists()) {
+            storageDir.mkdirs(); // Make sure you have set WRITE_EXTERNAL_STORAGE permission
+        }
+
         File image = File.createTempFile(
-                imageFileName,  // prefix
-                ".jpg",         // suffix
-                storageDir      // directory
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
         );
+
         return image;
     }
 
