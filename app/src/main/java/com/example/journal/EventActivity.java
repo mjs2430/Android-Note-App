@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class EventActivity extends AppCompatActivity {
     private ListView noteListView;
     private List<Note> noteList = new ArrayList<>();
     private NoteAdapter noteAdapter;
+    private TextView eventTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,11 @@ public class EventActivity extends AppCompatActivity {
 
         selectedEvent = getIntent().getStringExtra("event");
         setTitle(selectedEvent);
+
+        selectedEvent = getIntent().getStringExtra("event");
+
+        eventTitle = findViewById(R.id.event_title); // Add this
+        eventTitle.setText(selectedEvent); // Add this
 
         noteListView = findViewById(R.id.note_list_view);
         noteAdapter = new NoteAdapter(this, noteList);
