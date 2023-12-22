@@ -127,7 +127,8 @@ public class EventActivity extends AppCompatActivity {
     }
 
     private void exportToCSV() {
-        String fileName = "notes.csv";
+        // Replace spaces in event name with underscores for filename, add ".csv"
+        String fileName = selectedEvent.replaceAll(" ", "_") + ".csv";
 
         StringBuilder data = new StringBuilder();
 
